@@ -15,7 +15,6 @@ mhands = mpHands.Hands(
     min_tracking_confidence=0.75,
     max_num_hands=2)
 
-
 translate = {
     -1: 'No Gesture',
     2: 'like',
@@ -27,22 +26,22 @@ translate = {
     22: 'Hi',
     6: 'Stop',
     20: 'Stop',
-    5: 'A lot',
-    23: 'A lot',
-    # 4: 'few',
-    # 26: 'A little',
+    #     5: 'A lot',
+    #     23: 'A lot',
+    #     4: 'few',
+    #     26: 'few',
 }
 
 cap = cv2.VideoCapture(0)
 l = []
 t = time.perf_counter()
+
 colors = []
+
 gesture = translate[-1]
 font = cv2.FONT_HERSHEY_SIMPLEX
 
-
 while True:
-
     success, img = cap.read()
     img = cv2.flip(img, 1)
     h, w, c = img.shape
@@ -91,21 +90,16 @@ while True:
             cv2.rectangle(img, p0, p1, (0, 255, 0), 2)
         try:
             for hand in hands:
-                himg = hands[0]
-                red = himg[:, :, 2]
-                ret, thresh_gray = cv2.threshold(red, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
-
+                himg = hand
                 b, g, r = cv2.split(himg)
                 colors = colors[:-10]
                 bgr_mean = np.mean(colors, 0).astype(np.uint8).reshape(3)
 
                 th = cv2.inRange(r, int(bgr_mean[2] - 100), int(bgr_mean[2] + 100))
                 th = th & cv2.inRange(g, int(bgr_mean[0] - 100), int(bgr_mean[0] + 100))
-                th = cv2.morphologyEx(th, cv2.MORPH_OPEN, cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (6, 6)))
 
+                th = cv2.morphologyEx(th, cv2.MORPH_OPEN, cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (6, 6)))
                 th = cv2.resize(th, (64, 64))
-                th = (th > 100).astype(np.uint8) * 255
-                th3 = cv2.merge((th, th, th))
 
         except:
             ...
@@ -134,7 +128,7 @@ while True:
         ...
 
     h, w, c = img.shape
-    cv2.putText(img, gesture, (int(w/2), int(h*8/10)), font, 1, (255, 255, 255), 2, cv2.LINE_AA)
+    cv2.putText(img, gesture, (int(w / 2), int(h * 8 / 10)), font, 1, (255, 255, 255), 2, cv2.LINE_AA)
     cv2.imshow('', img)
 
     if cv2.waitKey(1) & 0xff == ord('q'):
