@@ -123,7 +123,7 @@ while True:
     try:
         h, w, c = img.shape
         cv2.putText(img, str(gesture), (int(w / 2), int(h * 8 / 10)), font, 1, (255, 255, 255), 2, cv2.LINE_AA)
-        cv2.imshow('', himg)
+        cv2.imshow('', img)
     except:
         ...
 
