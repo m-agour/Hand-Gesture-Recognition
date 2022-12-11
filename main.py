@@ -17,19 +17,12 @@ mhands = mpHands.Hands(
 
 translate = {
     -1: 'No Gesture',
-    2: 'like',
-    # 3: 'One',
-    # 1: 'One',
-    # 29: 'One',
+    9: 'like',
     13: 'Hi',
     21: 'Hi',
     22: 'Hi',
     6: 'Stop',
     20: 'Stop',
-    #     5: 'A lot',
-    #     23: 'A lot',
-    #     4: 'few',
-    #     26: 'few',
 }
 
 cap = cv2.VideoCapture(0)
@@ -37,7 +30,7 @@ l = []
 t = time.perf_counter()
 
 colors = []
-
+s = 64
 gesture = translate[-1]
 font = cv2.FONT_HERSHEY_SIMPLEX
 
@@ -99,13 +92,13 @@ while True:
                 th = th & cv2.inRange(g, int(bgr_mean[0] - 100), int(bgr_mean[0] + 100))
 
                 th = cv2.morphologyEx(th, cv2.MORPH_OPEN, cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (6, 6)))
-                th = cv2.resize(th, (64, 64))
+                th = cv2.resize(th, (s, s))
 
         except:
             ...
         himg = hand
         try:
-            himg = cv2.resize(himg, (64, 64))
+            himg = cv2.resize(himg, (s, s))
         except:
             continue
 
@@ -113,7 +106,7 @@ while True:
         himg = cv2.cvtColor(himg, cv2.COLOR_BGR2GRAY)
         himg = cv2.merge((himg, himg, himg))
 
-        res = model(himg.reshape(-1, 64, 64, 3))
+        res = model(himg.reshape(-1, s, s, 3))
         am = np.argmax(res)
         l.append(am)
 
@@ -121,15 +114,18 @@ while True:
         if time.perf_counter() - t > 0.5:
             l = [translate[i] for i in l if i in translate] + [translate[-1]]
             gesture = max(l, key=l.count)
+            # print(gesture)
             l = []
             t = time.perf_counter()
 
     except:
         ...
-
-    h, w, c = img.shape
-    cv2.putText(img, gesture, (int(w / 2), int(h * 8 / 10)), font, 1, (255, 255, 255), 2, cv2.LINE_AA)
-    cv2.imshow('', img)
+    try:
+        h, w, c = img.shape
+        cv2.putText(img, str(gesture), (int(w / 2), int(h * 8 / 10)), font, 1, (255, 255, 255), 2, cv2.LINE_AA)
+        cv2.imshow('', himg)
+    except:
+        ...
 
     if cv2.waitKey(1) & 0xff == ord('q'):
         break
