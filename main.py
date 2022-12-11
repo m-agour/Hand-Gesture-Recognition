@@ -95,14 +95,9 @@ while True:
                 red = himg[:, :, 2]
                 ret, thresh_gray = cv2.threshold(red, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
 
-                hsvim = cv2.cvtColor(himg, cv2.COLOR_BGR2YCrCb)
-
-                h, s, v = cv2.split(hsvim)
                 b, g, r = cv2.split(himg)
                 colors = colors[:-10]
                 bgr_mean = np.mean(colors, 0).astype(np.uint8).reshape(3)
-                hsv_mean = cv2.cvtColor(bgr_mean.reshape((1, 1, 3)), cv2.COLOR_BGR2YCrCb).reshape(3).astype(
-                    np.uint8).reshape(3)
 
                 th = cv2.inRange(r, int(bgr_mean[2] - 100), int(bgr_mean[2] + 100))
                 th = th & cv2.inRange(g, int(bgr_mean[0] - 100), int(bgr_mean[0] + 100))
